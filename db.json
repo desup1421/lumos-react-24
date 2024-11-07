@@ -1,0 +1,14 @@
+{
+  "activities": [
+    {
+      "id": "1",
+      "title": "Workout",
+      "description": "Complete a 30-minute workout session"
+    },
+    {
+      "id": "2",
+      "title": "Study React",
+      "description": "Spend an hour studying React fundamentals"
+    }
+  ]
+}
