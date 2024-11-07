@@ -4,6 +4,8 @@ import ActivityList from "../components/ActivityList";
 
 const Home = () => {
   const [showModal, setShowModal] = useState(false); // State untuk mengontrol modal
+  const [activities, setActivities] = useState([]);
+
 
   return (
     <div>
@@ -14,8 +16,8 @@ const Home = () => {
       >
         Add Activity
       </button>
-      <ActivityList />
-      <ActivityForm showModal={showModal} setShowModal={setShowModal} />
+      <ActivityList activities={activities} setActivities={setActivities} />
+      <ActivityForm showModal={showModal} setShowModal={setShowModal} setActivities={setActivities} />
     </div>
   );
 };

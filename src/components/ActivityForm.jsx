@@ -1,14 +1,39 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
+import PropTypes from "prop-types";
+import useFormControl from "../hooks/useFormControl";
+import axios from "axios";
 
-const ActivityForm = ({ showModal, setShowModal }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+const ActivityForm = ({ showModal, setShowModal, setActivities }) => {
+  const [formInput, handleChangeFormInput, clearForm] = useFormControl({
+    title: "",
+    description: "",
+  });
+  const [loading, setLoading] = useState(false);
 
   const handleClose = () => {
     setShowModal(false);
-    setTitle("");
-    setDescription("");
+    clearForm();
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    axios
+      .post("http://localhost:3000/activities", formInput)
+      .then((response) => {
+        setActivities((prevActivities) => {
+          return [...prevActivities, response.data];
+        });
+        handleClose();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+    handleClose();
   };
 
   return (
@@ -17,7 +42,7 @@ const ActivityForm = ({ showModal, setShowModal }) => {
         <Modal.Title>Add Activity</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="title" className="form-label">
               Title
@@ -26,8 +51,9 @@ const ActivityForm = ({ showModal, setShowModal }) => {
               type="text"
               className="form-control"
               id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              name="title"
+              value={formInput.title}
+              onChange={(e) => handleChangeFormInput(e)}
             />
           </div>
           <div className="mb-3">
@@ -38,17 +64,24 @@ const ActivityForm = ({ showModal, setShowModal }) => {
               className="form-control"
               id="description"
               rows="3"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              name="description"
+              value={formInput.description}
+              onChange={(e) => handleChangeFormInput(e)}
             ></textarea>
           </div>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" disabled={loading} type="submit">
             Add
           </Button>
         </form>
       </Modal.Body>
     </Modal>
   );
+};
+
+ActivityForm.propTypes = {
+  showModal: PropTypes.bool,
+  setShowModal: PropTypes.func,
+  setActivities: PropTypes.func,
 };
 
 export default ActivityForm;
